@@ -10,7 +10,7 @@
 
 ##  Descripción
 
-Análisis completo del Censo General de Población y Vivienda 2000 del INEGI con más de **17 millones de registros** para estudiar la desigualdad estructural en el acceso a servicios de salud en México. El proyecto implementa un pipeline completo de datos desde la importación hasta la visualización y modelado estadístico.
+Análisis completo del Censo General de Población y Vivienda 2000 del INEGI con más de **10 millones de registros** para estudiar la desigualdad estructural en el acceso a servicios de salud en México. El proyecto implementa un pipeline completo de datos desde la importación hasta la visualización y modelado estadístico.
 
 ---
 
