@@ -1,107 +1,104 @@
 ## Análisis de Acceso a Servicios de Salud — Censo INEGI 2000
 
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![SQL Server](https://img.shields.io/badge/SQL%20Server-17.0-red)
-![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-yellow)
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+![SQL Server](https://img.shields.io/badge/SQL%20Server-2025-red)
+![PySpark](https://img.shields.io/badge/PySpark-3.5.6-orange)
 
 > Proyecto desarrollado para la materia **Programación II** de la **Maestría en Ciencia de Datos (MCD)** — Universidad de Guadalajara, CUCEA.
 
 ---
 
-##  Descripción
+## Descripción
 
 Análisis completo del Censo General de Población y Vivienda 2000 del INEGI con más de **10 millones de registros** para estudiar la desigualdad estructural en el acceso a servicios de salud en México. El proyecto implementa un pipeline completo de datos desde la importación hasta la visualización y modelado estadístico.
 
 ---
 
-##  Pregunta de Investigación
+## Pregunta de Investigación
 
 **¿Qué factores determinan el acceso a servicios de salud en México en el año 2000?**
 
-- **Modelo Explicativo (OLS):** ¿Cuánto afecta cada variable demográfica a la derechohabiencia?
-- **Modelo Predictivo (Random Forest):** ¿Podemos predecir la edad de muerte usando variables demográficas y acceso a salud?
+- **Modelo Explicativo (Logit / OLS):** ¿Cuánto afecta cada variable demográfica a la derechohabiencia?
+- **Modelo Predictivo (Decision Tree / Random Forest):** ¿Podemos predecir el acceso y la edad de muerte usando variables demográficas?
 
 ---
 
-##  Hallazgos Principales
+## Hallazgos Principales
 
 | Indicador | Valor |
 |-----------|-------|
-| Población sin derechohabiencia | **65.6%** |
+| Población sin derechohabiencia | **65.3%** |
 | Población rural sin cobertura | **83.7%** |
 | Población indígena sin cobertura | **86.3%** |
-| Edad promedio de la población | **25.88 años** |
-| Total de registros analizados | **17 millones** |
+| Total de registros analizados | **8,896,028** (de 10,099,182 tras limpieza) |
+| Variable predictora dominante | **Nivel educativo** (77–81% de importancia) |
+| Efecto derechohabiencia en edad de muerte | **+3.46 años de vida** (OLS, p < 0.0001) |
 
 ---
 
-##  Stack Tecnológico
+## Stack Tecnológico
 
 ```
-CSV (1.69GB) → SQL Server → Python (Jupyter) → Power BI
+CSV (1.69GB) → SQL Server 2025 → PySpark + Python (Jupyter) → Power BI
 ```
 
 | Herramienta | Uso |
 |-------------|-----|
-| **SQL Server 17.0** | Almacenamiento y procesamiento (BULK INSERT, 13 vistas, 5 dimensiones) |
-| **Python 3.10** | Análisis estadístico y modelado |
+| **SQL Server 2025** | Almacenamiento y procesamiento (BULK INSERT, 13 vistas, 5 dimensiones, tablas materializadas) |
+| **Apache Spark 3.5.6** | Procesamiento distribuido de los 10M registros sin cargar en RAM |
+| **Python 3.13** | Análisis estadístico y modelado |
 | **Power BI** | Dashboard de storytelling |
-| **Grafana** | Monitoreo del pipeline |
-| **Orange** | Minería de datos y clustering |
+| **Orange3** | Minería de datos y clustering |
 
 ---
 
-##  Librerías Python
+## Librerías Python
 
 ```python
 pandas          # Manipulación de datos
 numpy           # Cálculo numérico
 pyodbc          # Conexión a SQL Server
-statsmodels     # Modelado explicativo (OLS)
-scikit-learn    # Modelado predictivo (Random Forest)
+pyspark         # Procesamiento distribuido (tabla completa)
+findspark       # Localizar instalación de Spark
+statsmodels     # Modelado explicativo (Logit, OLS)
+scikit-learn    # Modelado predictivo (Decision Tree, Random Forest)
 matplotlib      # Visualización
+rpy2            # Pruebas estadísticas en R (chi-cuadrado)
+python-dotenv   # Credenciales desde .env
 ```
 
 ---
 
-##  Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 censo-salud-mexico-2000/
 │
 ├── notebooks/
-│   ├── Actividad_Defunciones_SQL.ipynb        # Análisis general con Pandas/NumPy
-│   └── Modelado_Predictivo_vs_Explicativo.ipynb  # Modelos OLS vs Random Forest
+│   ├── Actividad_Defunciones_SQL.ipynb           # Pipeline completo: Spark + NumPy + rpy2 + Scikit-learn
+│   └── Modelado_Predictivo_vs_Explicativo.ipynb  # Comparativa OLS vs Random Forest
 │
-├── sql/
-│   ├── 01_crear_base_datos.sql                # Creación de base de datos y tabla
-│   ├── 02_bulk_insert.sql                     # Importación del CSV
-│   ├── 03_vistas.sql                          # 13 vistas de análisis
-│   └── 04_dimensiones.sql                     # 5 tablas dimensión
+├── outputs/
+│   └── visualizations/                           # PNGs generados por los notebooks
 │
-├── data/
-│   ├── acceso_salud.csv                       # Vista exportada
-│   ├── grupos_edad.csv
-│   ├── urbano_rural.csv
-│   ├── indigena_salud.csv
-│   ├── escolaridad.csv
-│   ├── ingresos.csv
-│   ├── mortalidad_infantil.csv
-│   ├── salud_educacion.csv
-│   ├── salud_por_estado.csv
-│   ├── kpis_generales.csv
-│   ├── perfil_demografico.csv
-│   ├── discapacidad_salud.csv
-│   └── estcivil_salud.csv
-│
+├── data/                                          # Datos exportados de vistas SQL (gitignored)
+├── sql/                                           # Scripts SQL (gitignored por tamaño)
 └── README.md
 ```
 
 ---
 
-##  Base de Datos SQL Server
+## Base de Datos SQL Server
+
+### Estrategia de acceso a datos
+
+Dado el volumen de 10M registros se implementaron dos estrategias:
+
+1. **Tablas materializadas con Pandas** — para análisis descriptivo (carga en < 1 segundo)
+2. **Apache Spark vía JDBC** — para modelado predictivo sobre la tabla completa
 
 ### Vistas creadas (13)
+
 | Vista | Descripción |
 |-------|-------------|
 | `vw_acceso_salud` | Acceso a servicios por estado, sexo y edad |
@@ -118,7 +115,19 @@ censo-salud-mexico-2000/
 | `vw_discapacidad_salud` | Cobertura por tipo de discapacidad |
 | `vw_estcivil_salud` | Cobertura por estado civil |
 
+### Tablas materializadas (6)
+
+| Tabla | Registros |
+|-------|-----------|
+| `tbl_kpis` | 1 |
+| `tbl_acceso_resumen` | 3 |
+| `tbl_estados_resumen` | 32 |
+| `tbl_urbano_resumen` | 7 |
+| `tbl_escolaridad_resumen` | 11 |
+| `tbl_indigena_resumen` | 6 |
+
 ### Tablas dimensión (5)
+
 | Tabla | Registros |
 |-------|-----------|
 | `dim_estados` | 32 |
@@ -129,68 +138,98 @@ censo-salud-mexico-2000/
 
 ---
 
-##  Modelos Estadísticos
+## Modelos Estadísticos
 
-### Modelo 1 — Explicativo (statsmodels OLS)
-- **Variable dependiente:** `tiene_derechohabiencia` (0/1)
-- **Variables independientes:** ENT, SEXO, EDAD, NIVELACAD, TAM_LOC
-- **Métricas:** R², coeficientes, p-valores, intervalos de confianza
+### Notebook 1 — Actividad_Defunciones_SQL
 
-### Modelo 2 — Predictivo (Random Forest Regressor)
-- **Variable dependiente:** `EDAD` (edad de muerte)
-- **Variables independientes:** ENT, SEXO, NIVELACAD, TAM_LOC, `tiene_derechohabiencia`
-- **Métricas:** R², RMSE
-- **Configuración:** 100 árboles, profundidad máxima 10, carga por chunks de 100K
+| Paso | Herramienta | Descripción |
+|------|-------------|-------------|
+| Carga | PySpark JDBC | 10M registros desde SQL Server |
+| Análisis | NumPy | Estadísticas de cobertura y brecha urbano-rural |
+| Prueba estadística | rpy2 (R) | Chi-cuadrado de bondad de ajuste |
+| Modelo | Decision Tree | Clasificación de derechohabiencia |
 
-### Comparativa
-| | Explicativo (OLS) | Predictivo (Random Forest) |
+### Notebook 2 — Modelado Predictivo vs Explicativo
+
+#### Modelo 1 — Derechohabiencia
+
+| Enfoque | Modelo | Métrica | Resultado |
+|---------|--------|---------|-----------|
+| Explicativo | Logit (statsmodels) | Pseudo R² | **0.1224** |
+| Predictivo | Decision Tree (max_depth=5) | Accuracy | **71.45%** |
+
+**Variable más importante:** Nivel Educativo (77.1%), seguido de Edad (16.2%)
+
+#### Modelo 2 — Edad de Muerte
+
+| Enfoque | Modelo | Métrica | Resultado |
+|---------|--------|---------|-----------|
+| Explicativo | OLS (statsmodels) | R² | **0.028** |
+| Predictivo | Random Forest (100 árboles, profundidad 10) | R² | **0.2696** |
+| Predictivo | Random Forest | RMSE | **14.61 años** |
+
+**Variable más importante:** Nivel Educativo (81.4%)
+
+**Efecto de la derechohabiencia en la edad de muerte:** +3.46 años (p < 0.0001)
+
+#### Nota sobre el R² del OLS
+
+El R² bajo (0.028) en el modelo OLS para edad de muerte es esperado en datos de defunciones: la edad de muerte tiene alta varianza individual y las variables demográficas disponibles no capturan factores genéticos, de estilo de vida ni causa específica de muerte. El Random Forest extrae relaciones no lineales que el OLS no puede capturar (R² = 0.27).
+
+### Comparativa general
+
+| | Explicativo | Predictivo |
 |---|---|---|
-| Variable dependiente | Derechohabiencia | Edad de muerte |
-| Métrica principal | R², p-valores | R², RMSE |
-| Fortaleza | Interpretable | Preciso |
-| Limitación | Solo lineal | Caja negra |
-| Responde | ¿Por qué? | ¿Qué tan bien? |
+| Fortaleza | Interpretabilidad | Precisión |
+| Limitación | Supuestos paramétricos | Caja negra |
+| Pregunta | ¿Por qué? | ¿Qué tan bien? |
 
 ---
 
-##  Cómo ejecutar
+## Cómo ejecutar
 
-### 1. Requisitos
+### 1. Activar entorno
+
 ```bash
-pip install pandas numpy pyodbc statsmodels scikit-learn matplotlib
+conda activate MCD
 ```
 
-### 2. Configurar SQL Server
-```sql
--- Ejecutar en orden:
-01_crear_base_datos.sql
-02_bulk_insert.sql
-03_vistas.sql
-04_dimensiones.sql
+### 2. Configurar credenciales
+
+Crear archivo `.env` en la raíz del proyecto:
+
+```
+DB_SERVER=192.168.100.11   # o localhost si corres en homelab
+DB_PORT=1433
+DB_NAME=Defunciones_2000
+DB_USER=readonly
+DB_PASSWORD=MCD_2000
 ```
 
-### 3. Configurar conexión en notebooks
+### 3. Configurar Spark (homelab Linux)
+
 ```python
-conn = pyodbc.connect(
-    'DRIVER={ODBC Driver 17 for SQL Server};'
-    'SERVER=localhost;'
-    'DATABASE=Defunciones_2000;'
-    'UID=tu_usuario;'
-    'PWD=tu_password;'
-)
+import findspark
+findspark.init('/opt/spark')
 ```
+
+> En Windows (Katana): `findspark.init('C:\\spark')`
 
 ### 4. Ejecutar notebooks
+
 ```bash
 jupyter notebook
 ```
+
 Abrir y ejecutar en orden:
 1. `Actividad_Defunciones_SQL.ipynb`
 2. `Modelado_Predictivo_vs_Explicativo.ipynb`
 
+> El notebook detecta automáticamente el entorno: usa backend `Agg` en Linux headless y muestra gráficas inline en Jupyter con pantalla. Soporta ODBC Driver 17 y 18.
+
 ---
 
-##  Autor
+## Autor
 
 **Carlos Pulido Rosas**
 Maestría en Ciencia de Datos (MCD) — Semestre 2
@@ -199,7 +238,7 @@ Programación II
 
 ---
 
-##  Fuente de Datos
+## Fuente de Datos
 
 Instituto Nacional de Estadística y Geografía (INEGI)
 **Censo General de Población y Vivienda 2000**
