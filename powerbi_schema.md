@@ -3,7 +3,7 @@
 ## Conexión
 - Servidor: `192.168.100.11,1433` (red local) o `100.64.0.11,1433` (Tailscale)
 - Base de datos: `Defunciones_2000`
-- Usuario: `readonly` / `MCD_2000`
+- Usuario: ver credenciales compartidas por el equipo
 - Autenticación: SQL Server
 
 ## Tablas a importar

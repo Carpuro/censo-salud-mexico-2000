@@ -209,8 +209,8 @@ Crear archivo `.env` en la raíz del proyecto:
 DB_SERVER=192.168.100.11   # o localhost si corres en homelab
 DB_PORT=1433
 DB_NAME=Defunciones_2000
-DB_USER=readonly
-DB_PASSWORD=MCD_2000
+DB_USER=tu_usuario
+DB_PASSWORD=tu_password
 ```
 
 ### 3. Configurar Spark (homelab Linux)

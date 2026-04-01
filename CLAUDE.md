@@ -21,7 +21,7 @@ Análisis de la base de defunciones/censo INEGI 2000 (10M registros) — explora
 ## Base de datos
 - SQL Server 2025 en Docker (homelab: `localhost,1433`; compañeros: `192.168.100.11,1433`)
 - Base: `Defunciones_2000`, tabla principal: `defunciones`, 10,099,182 registros, 81 columnas VARCHAR
-- Usuario compartido (solo lectura): `readonly` / `MCD_2000`
+- Usuario compartido (solo lectura): ver credenciales del equipo
 - CRITICAL: todas las columnas son VARCHAR — siempre CAST en SQL o pd.to_numeric en Python
 - CRITICAL: NOTIEDER='5' = sin derechohabiencia; NOTIEDER=NULL = con cobertura — NUNCA filtrar IS NOT NULL
 - CRITICAL: NIVELACAD usa códigos 2 dígitos INEGI (00,10,20,30,40,51,52,61,62,63,73,80,90) — NO 1-9
