@@ -78,9 +78,6 @@ censo-salud-mexico-2000/
 │   ├── Actividad_Defunciones_SQL.ipynb           # Pipeline completo: Spark + NumPy + rpy2 + Scikit-learn
 │   └── Modelado_Predictivo_vs_Explicativo.ipynb  # Comparativa OLS vs Random Forest
 │
-├── outputs/
-│   └── visualizations/                           # PNGs generados por los notebooks
-│
 ├── figures/                                       # Visualizaciones PNG (trackeadas en git)
 ├── sql/                                           # Scripts SQL (gitignored por tamaño)
 └── README.md
@@ -123,8 +120,8 @@ Dado el volumen de 10M registros se implementaron dos estrategias:
 | `tbl_acceso_resumen` | 3 | Resumen por tipo de servicio |
 | `tbl_estados_resumen` | 32 | Cobertura por estado con IMSS, ISSSTE, PEMEX |
 | `tbl_urbano_resumen` | 7 | Cobertura por tipo de localidad (rural → megalópolis) |
-| `tbl_escolaridad_resumen` | 8 | Cobertura por nivel educativo (códigos INEGI reales) |
-| `tbl_indigena_resumen` | 2 | Cobertura por hablante de lengua indígena |
+| `tbl_escolaridad_resumen` | 11 | Cobertura por nivel educativo (códigos INEGI reales) |
+| `tbl_indigena_resumen` | 6 | Cobertura por hablante de lengua indígena |
 | `tbl_grupos_edad_resumen` | 6 | Cobertura por grupo de edad (0-14, 15-29, ..., 75+) |
 
 ### Tablas de modelos — Power BI (3)

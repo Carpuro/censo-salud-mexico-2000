@@ -41,7 +41,7 @@ Análisis de la base de defunciones/censo INEGI 2000 (10M registros) — explora
 
 ## Tablas y vistas en SQL Server
 
-### Dimensiones (5)
+### Dimensiones (6)
 - `dim_estados` — 32 estados (clave_estado, nombre_estado)
 - `dim_sexo` — sexo (1=Hombre, 2=Mujer, 9=No especificado)
 - `dim_localidad` — tipos de localidad, claves 1-7
