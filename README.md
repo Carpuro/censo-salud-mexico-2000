@@ -81,7 +81,7 @@ censo-salud-mexico-2000/
 ├── outputs/
 │   └── visualizations/                           # PNGs generados por los notebooks
 │
-├── data/                                          # Datos exportados de vistas SQL (gitignored)
+├── figures/                                       # Visualizaciones PNG (trackeadas en git)
 ├── sql/                                           # Scripts SQL (gitignored por tamaño)
 └── README.md
 ```
@@ -115,26 +115,36 @@ Dado el volumen de 10M registros se implementaron dos estrategias:
 | `vw_discapacidad_salud` | Cobertura por tipo de discapacidad |
 | `vw_estcivil_salud` | Cobertura por estado civil |
 
-### Tablas materializadas (6)
+### Tablas materializadas (7)
 
-| Tabla | Registros |
-|-------|-----------|
-| `tbl_kpis` | 1 |
-| `tbl_acceso_resumen` | 3 |
-| `tbl_estados_resumen` | 32 |
-| `tbl_urbano_resumen` | 7 |
-| `tbl_escolaridad_resumen` | 11 |
-| `tbl_indigena_resumen` | 6 |
+| Tabla | Registros | Descripción |
+|-------|-----------|-------------|
+| `tbl_kpis` | 1 | KPIs generales: totales, porcentajes, edad promedio |
+| `tbl_acceso_resumen` | 3 | Resumen por tipo de servicio |
+| `tbl_estados_resumen` | 32 | Cobertura por estado con IMSS, ISSSTE, PEMEX |
+| `tbl_urbano_resumen` | 7 | Cobertura por tipo de localidad (rural → megalópolis) |
+| `tbl_escolaridad_resumen` | 8 | Cobertura por nivel educativo (códigos INEGI reales) |
+| `tbl_indigena_resumen` | 2 | Cobertura por hablante de lengua indígena |
+| `tbl_grupos_edad_resumen` | 6 | Cobertura por grupo de edad (0-14, 15-29, ..., 75+) |
 
-### Tablas dimensión (5)
+### Tablas de modelos — Power BI (3)
 
-| Tabla | Registros |
-|-------|-----------|
-| `dim_estados` | 32 |
-| `dim_sexo` | 3 |
-| `dim_nivel_educativo` | 9 |
-| `dim_servicios_salud` | 6 |
-| `dim_localidad` | 5 |
+| Tabla | Descripción |
+|-------|-------------|
+| `tbl_metricas_modelos` | Pseudo R², Accuracy, R², RMSE por modelo y enfoque |
+| `tbl_importancia_variables` | Importancia de features filtrable por modelo y algoritmo |
+| `tbl_coeficientes_ols` | Coeficientes OLS con p-valor, significancia e interpretación |
+
+### Tablas dimensión (6)
+
+| Tabla | Registros | Notas |
+|-------|-----------|-------|
+| `dim_estados` | 32 | clave_estado, nombre_estado |
+| `dim_sexo` | 3 | 1=Hombre, 2=Mujer, 9=No esp. |
+| `dim_nivel_educativo` | 9 | Niveles simplificados — no usar para joins con defunciones |
+| `dim_nivelacad` | 13 | Códigos INEGI reales 2 dígitos + categoría — usar esta |
+| `dim_servicios_salud` | 6 | Instituciones de salud |
+| `dim_localidad` | 7 | Claves 1-7 incluyendo ciudades grandes y megalópolis |
 
 ---
 
