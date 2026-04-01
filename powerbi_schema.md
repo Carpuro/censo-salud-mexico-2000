@@ -1,7 +1,7 @@
 # Esquema Power BI — Acceso a Servicios de Salud México 2000
 
 ## Conexión
-- Servidor: `192.168.100.11,1433` (red local) o `100.64.0.11,1433` (Tailscale)
+- Servidor: ver DB_SERVER en .env (solicitar al equipo)
 - Base de datos: `Defunciones_2000`
 - Usuario: ver credenciales compartidas por el equipo
 - Autenticación: SQL Server

@@ -19,7 +19,7 @@ Análisis de la base de defunciones/censo INEGI 2000 (10M registros) — explora
 - ODBC: el notebook detecta automáticamente Driver 18 o 17
 
 ## Base de datos
-- SQL Server 2025 en Docker (homelab: `localhost,1433`; compañeros: `192.168.100.11,1433`)
+- SQL Server 2025 en Docker — configurar DB_SERVER en .env (localhost en homelab, IP del servidor en otros equipos)
 - Base: `Defunciones_2000`, tabla principal: `defunciones`, 10,099,182 registros, 81 columnas VARCHAR
 - Usuario compartido (solo lectura): ver credenciales del equipo
 - CRITICAL: todas las columnas son VARCHAR — siempre CAST en SQL o pd.to_numeric en Python
